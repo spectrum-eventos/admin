@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+#
+# ZRP Aplicações Informáticas LTDA - ME
+#
+# The following script intents to be used
+# to deploy to S3 and refreshes CDN cache in AWS
+#
+# Please, setup a contractize profile in your aws credentials
+#
+
+set -e
+
+# Export configs
+export LANG=C.UTF-8
+export WHITE='\033[1m\033[0;97m'
+export BLACK='\033[1m\033[0;90m'
+export CYAN='\033[1;36m'
+export MAGENTA='\033[1;35m'
+export GREEN='\033[0;32m'
+export RED='\033[0;31m'
+export YELLOW='\033[0;33m'
+export RED_BG='\033[0;41m'
+export NC='\033[0m'
+
+ENVIRONMENT=${ENV:-STAGING}
+
+mkdir -p dist
+rm -r ./dist
+mkdir dist
+
+./node_modules/.bin/quasar build
+
+if [ $ENVIRONMENT = 'STAGING' ]; then
+  PRODUCTION='1' API_URL='' ./node_modules/.bin/quasar build
+  BUCKET=""
+  DISTRIBUTION_ID=""
+elif [ $ENVIRONMENT = 'PROD' ]; then
+  API_URL='' ./node_modules/.bin/quasar build
+  BUCKET=""
+  DISTRIBUTION_ID=""
+else
+  echo -e "\033[0;31mInvalid enviroment error, must be STAGING or PROD!\033[0m 🤓"
+  exit 1
+fi
+
+if [ -n "$PROFILE" ]; then
+  echo -e "Deploying with profile ${PROFILE}..."
+  aws s3 sync ./dist/spa-mat $BUCKET --acl public-read --delete --profile $PROFILE
+  aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html --profile $PROFILE
+else
+  echo -e "Deploying with environment credentials..."
+  aws s3 sync ./dist/spa-mat $BUCKET --acl public-read --delete
+  aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html
+fi
