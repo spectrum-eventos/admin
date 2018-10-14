@@ -10,6 +10,12 @@ q-page.qrcodegenerator
     :columns='columns'
     ).table
     template(slot='top-right' slot-scope='props')
+      q-btn(
+        label='baixar todos'
+        color='primary'
+        :disabled='users.length === 0'
+        :loading='downloading'
+        @click.native='downloadAll').q-mr-md
       input(id="sheet-input" ref="sheetInput" accept='.csv'
         type='file' @change="parseCSV")
       label(for="sheet-input").upload-label
@@ -30,19 +36,14 @@ q-page.qrcodegenerator
       q-icon(
         name='ion-download'
         size='2rem'
-        @click.native='showConfirmModal(props.row)'
+        @click.native='download(props.row)'
         ).cursor-pointer
-    div.row.flex-center.q-py-sm(slot='pagination', slot-scope='props')
-      q-btn.q-mr-sm(round dense size='sm' icon='keyboard_arrow_left' color='secondary'
-        :disable='props.isFirstPage', @click='props.prevPage')
-      div.q-mr-sm(style='font-size: small')
-        | Página {{ props.pagination.page }} / {{ props.pagination.totalPages }}
-      q-btn(round dense size='sm' icon='keyboard_arrow_right' color='secondary'
-        :disable='props.isLastPage' @click='props.nextPage')
 </template>
 
 <script>
 import VueQrcode from '@xkeshi/vue-qrcode';
+import JSZip from 'jszip';
+import saveAs from 'file-saver';
 
 export default {
   name: 'qrcodegenerator',
@@ -54,6 +55,7 @@ export default {
   data() {
     return {
       loading: false,
+      downloading: false,
       users: [],
       columns: [
         {
@@ -81,6 +83,7 @@ export default {
     },
     async generateQRCodes(event) {
       this.loading = true;
+      this.users = [];
       const names = event.target.result.split('\n');
       /* eslint-disable */
       for (let index = 0; index < names.length; index += 1) {
@@ -93,6 +96,27 @@ export default {
       }
       /* eslint-enable */
       this.loading = false;
+    },
+    download(user) {
+      const qrCode = document.getElementById(`qr-code-${user.id}`);
+      const imageToDownload = qrCode.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `${user.name}.png`;
+      link.href = imageToDownload;
+      link.click();
+    },
+    async downloadAll() {
+      this.downloading = true;
+      const zip = new JSZip();
+      const images = zip.folder('qrcodes');
+      await this.users.map((user) => {
+        const qrCode = document.getElementById(`qr-code-${user.id}`);
+        const imageToDownload = qrCode.toDataURL().replace('data:image/png;base64,', '');
+        return images.file(`${user.name}.png`, imageToDownload, { base64: true });
+      });
+      const zipContent = await zip.generateAsync({ type: 'blob' });
+      this.downloading = false;
+      saveAs(zipContent, 'qrcodes.zip');
     },
   },
 };
