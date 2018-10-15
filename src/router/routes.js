@@ -32,6 +32,7 @@ export default [
     meta: { auth: true },
     children: [
       { path: 'list', component: () => import('pages/list/list') },
+      { path: 'frequency', component: () => import('pages/event/frequency') },
     ],
   },
 

@@ -86,7 +86,7 @@ export default {
       return {
         page,
         'search[event_id_eq]': this.$route.params.id,
-        'search[s]': 'created_at desc',
+        'search[s]': 'name',
       };
     },
     async fetchLists({ pagination }) {

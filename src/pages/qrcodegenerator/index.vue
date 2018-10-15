@@ -1,7 +1,7 @@
 <template lang="pug">
 q-page.qrcodegenerator
   q-table(
-    title='Presenças'
+    title='QR Codes'
     row-key='id'
     rows-per-page-label='Itens por página'
     no-data-label='Suba uma planilha para poder '
@@ -86,7 +86,7 @@ export default {
       this.users = [];
       const names = event.target.result.split('\n');
       /* eslint-disable */
-      for (let index = 0; index < names.length; index += 1) {
+      for (let index = 1; index < names.length; index += 1) {
         const user = {
           id: index,
           name: names[index],

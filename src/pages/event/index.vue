@@ -51,9 +51,13 @@ export default {
         inset-delimiter
       >
         <q-list-header>Menu</q-list-header>
-        <q-item @click.native="$router.push('`/event/${id}/list`')">
+        <q-item @click.native="$router.push(`/event/${id}/list`)">
           <q-item-side icon="list" />
           <q-item-main label="Gerenciar Chamadas" />
+        </q-item>
+        <q-item @click.native="$router.push(`/event/${id}/frequency`)">
+          <q-item-side icon="contacts" />
+          <q-item-main label="Ver frequência" />
         </q-item>
         <q-item @click.native="$router.push('/event')">
           <q-item-side icon="arrow back" />

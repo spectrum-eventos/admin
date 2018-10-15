@@ -105,6 +105,7 @@ module.exports = function (ctx) {
         'Dialog',
         'Loading',
       ],
+      i18n: 'pt-br',
     },
     // animations: 'all' --- includes all animations
     animations: [

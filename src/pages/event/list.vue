@@ -82,7 +82,7 @@ export default {
     getParams({ page }) {
       return {
         page,
-        'search[s]': 'created_at desc',
+        'search[s]': 'name',
       };
     },
     async fetchEvents({ pagination }) {
