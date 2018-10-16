@@ -6,11 +6,15 @@ q-page.frequency
     rows-per-page-label='Itens por página'
     no-data-label='Nenhum presença foi criado ainda'
     :loading='loading'
-    :data='users'
+    :data='approvedUsers'
     :columns='columns'
     ).table
     template(slot='top-right' slot-scope='props')
       .row.items-end
+        q-field(label='Mostrar apenas aprovados' orientation='vertical').q-pa-md.field-frequency
+          q-checkbox(
+            v-model='showApproved'
+            )
         q-field(label='Frequência desejada' orientation='vertical').q-pa-md.field-frequency
           q-input(
             inverted
@@ -55,6 +59,7 @@ export default {
   data() {
     return {
       loading: false,
+      showApproved: false,
       columns: [
         {
           name: 'certified',
@@ -102,6 +107,18 @@ export default {
         };
         return option;
       });
+    },
+    approvedUsers() {
+      if (this.selectedLists.length > 0) {
+        return this.showApproved
+          ? this.users.filter((user) => {
+            const frequency = (user.attendance * 100) / this.selectedLists.length;
+            return frequency >= this.desiredFrequency;
+          })
+          : this.users;
+      }
+
+      return this.users;
     },
   },
   methods: {

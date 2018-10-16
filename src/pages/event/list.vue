@@ -1,10 +1,10 @@
 <template lang="pug">
 q-page#event-list
   q-table(
-    title='Eventos'
     row-key='id'
     rows-per-page-label='Itens por página'
     no-data-label='Nenhum evento foi criado ainda'
+    :title='`Eventos - Total ${pageConfig.rowsNumber}`'
     :loading='loading'
     :data='events'
     :columns='columns'
@@ -52,14 +52,11 @@ export default {
     return {
       loading: false,
       pageConfig: {
-        rowsNumber: 25,
+        rowsNumber: 0,
         page: 1,
         totalPages: null,
       },
       columns: [
-        {
-          name: 'id', label: 'Id', field: 'id', align: 'left',
-        },
         {
           name: 'name', label: 'Nome', field: 'name', align: 'left',
         },

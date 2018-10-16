@@ -52,9 +52,6 @@ export default {
       },
       columns: [
         {
-          name: 'id', label: 'Id', field: 'id', align: 'left',
-        },
-        {
           name: 'name', label: 'Nome', field: 'name', align: 'left',
         },
         {

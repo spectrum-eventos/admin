@@ -1,10 +1,10 @@
 <template lang="pug">
 q-page.qrcodegenerator
   q-table(
-    title='QR Codes'
     row-key='id'
     rows-per-page-label='Itens por página'
     no-data-label='Suba uma planilha para poder '
+    :title='`QR Codes - Total ${users.length}`'
     :loading='loading'
     :data='users'
     :columns='columns'
